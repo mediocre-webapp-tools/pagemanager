@@ -1,6 +1,6 @@
 {
   "name": "pagemanager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A module for easily managing HTML pages",
   "main": "pagemanager.js",
   "scripts": {
@@ -10,5 +10,13 @@
   "license": "Apache-2.0",
   "dependencies": {
     "jquery": "^3.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mediocre-webapp-tools/pagemanager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mediocre-webapp-tools/pagemanager/issues"
+  },
+  "homepage": "https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/"
 }
