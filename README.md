@@ -2,6 +2,16 @@
 
 `pagemanager.js` is a simple module that lets you manage HTML "pages" by keeping the active page shown and every other page hidden.
 
+### Installing
+
+You need to get NPM. It comes with [node](https://nodejs.org/en/download/). Then do:
+
+```
+npm install --save pagemanager
+```
+
+Or just [follow these instructions to run it in your browser](https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/tutorial-Converting-to-browser-script.html).
+
 ### So, what is a "page"?
 
 A "page" would be something as simple as the following:
