@@ -1,0 +1,14 @@
+{
+  "name": "pagemanager",
+  "version": "1.0.0",
+  "description": "A module for easily managing HTML pages",
+  "main": "pagemanager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pablo Rodríguez <pabloviolin8@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jquery": "^3.1.0"
+  }
+}
