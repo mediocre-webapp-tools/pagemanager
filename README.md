@@ -45,4 +45,5 @@ request.send();
 
 ### Where to go from here?
 
-* [Use this in the browser without a CommonJS build system]{@tutorial Converting-to-browser-script}.
+* [Documentation](https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/)
+* [Use this in the browser without a CommonJS build system](https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/tutorial-Converting-to-browser-script.html).
