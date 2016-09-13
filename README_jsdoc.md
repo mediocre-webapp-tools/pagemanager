@@ -10,7 +10,7 @@ You need to get NPM. It comes with [node](https://nodejs.org/en/download/). Then
 npm install --save pagemanager
 ```
 
-Or just [follow these instructions to run it in your browser](https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/tutorial-Converting-to-browser-script.html).
+Or just [follow these instructions to run it in your browser]{@tutorial Converting-to-browser-script}.
 
 ### So, what is a "page"?
 
@@ -55,6 +55,5 @@ request.send();
 
 ### Where to go from here?
 
-* [Documentation](https://mediocre-webapp-tools.github.io/pagemanager/)
-* [Working with multiple files](https://mediocre-webapp-tools.github.io/pagemanager/tutorial-Working-with-multiple-files.html)
-* [Using this in the browser without a CommonJS build system](https://mediocre-webapp-tools.github.io/pagemanager/tutorial-Converting-to-browser-script.html).
+* [Working with multiple files]{@tutorial Working-with-multiple-files}
+* [Using this in the browser without a CommonJS build system]{@tutorial Converting-to-browser-script}

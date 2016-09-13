@@ -1,0 +1,4 @@
+# It's ok for the following files to get pushed to the git repo, but not to the npm repo.
+
+/tutorials
+jsdoc.json

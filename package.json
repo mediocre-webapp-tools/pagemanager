@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/mediocre-webapp-tools/pagemanager/issues"
   },
-  "homepage": "https://mediocre-webapp-tools.github.io/pagemanager/1.0.0/"
+  "homepage": "https://mediocre-webapp-tools.github.io/pagemanager/",
+  "devDependencies": {
+    "docdash": "^0.4.0"
+  }
 }

@@ -1,0 +1,13 @@
+{
+	"source": {
+		"include": [
+			"./"
+		]
+	},
+	"opts": {
+		"tutorials": "./tutorials",
+		"readme": "./README_jsdoc.md",
+		"package": "./package.json",
+		"template": "./node_modules/docdash"
+	}
+}
