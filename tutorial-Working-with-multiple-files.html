@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: Working-with-multiple-files - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PageManager.html">PageManager</a><ul class='methods'><li data-type='method'><a href="PageManager.html#load">load</a></li><li data-type='method'><a href="PageManager.html#show">show</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Converting-to-browser-script.html">Converting-to-browser-script</a></li><li><a href="tutorial-Working-with-multiple-files.html">Working-with-multiple-files</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Tutorial: Working-with-multiple-files</h1>
+    
+
+    <section>
+
+<header>
+    
+
+    <h2>Working-with-multiple-files</h2>
+</header>
+
+<article>
+    <h1>Working with multiple files</h1><p>Okay, in paper, <code>pagemanager</code> sounds good. But in practice, no one is gonna write every page of the app into a single .html file. That file would surely surpass the 1000 lines of code, and developing that would become a mess. That's why you should work with multiple files.</p>
+<p><a href="https://github.com/mediocre-webapp-tools/barebones-template">mediocre-webapp-tools/barebones-template</a> already does that, so if you want, go ahead and check it out. If you'd rather not use that template (probably the right decision), this tutorial details how to do it with <a href="http://gulpjs.com/">gulp</a>. You can go ahead and add gulp to your project:</p>
+<pre class="prettyprint source"><code>npm install --save-dev gulp</code></pre><p>You will also need the <a href="https://www.npmjs.com/package/gulp-tap">gulp-tap</a> plugin, so go ahead and install that:</p>
+<pre class="prettyprint source"><code>npm install --save-dev gulp-tap</code></pre><h3>Our project structure</h3><p>Our project will have the following structure:</p>
+<ul>
+<li>index.html</li>
+<li>/pages<ul>
+<li>main.html</li>
+<li>more.html</li>
+<li>pages.html</li>
+</ul>
+</li>
+<li>gulpfile.js</li>
+</ul>
+<p>Our index.html will be a regular html file that contains the <code>&lt;pages /&gt;</code> tag:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;title>My app!&lt;/title>
+    &lt;!-- more tags -->
+&lt;/head>
+&lt;body>
+    &lt;!-- a navbar that stays there even if you change the current page -->
+    &lt;!-- a sidebar that stays there even if you change the current page -->
+    &lt;!-- whatever you come up with -->
+
+    &lt;pages />
+&lt;/body>
+&lt;/html></code></pre><p>Files inside the <code>/pages</code> folder will be (you guessed it) our pages:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!-- main.html -->
+&lt;p>This is the main page&lt;/p>
+
+&lt;!-- more.html -->
+&lt;p>This is another page&lt;/p>
+
+&lt;!-- pages.html -->
+&lt;p>This is yet another page&lt;/p></code></pre><p>Our goal is to have a built <code>index.html</code> that looks like this:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;title>My app!&lt;/title>
+    &lt;!-- more tags -->
+&lt;/head>
+&lt;body>
+    &lt;!-- a navbar that stays there even if you change the current page -->
+    &lt;!-- a sidebar that stays there even if you change the current page -->
+    &lt;!-- whatever you come up with -->
+
+    &lt;div data-page=&quot;main&quot; style=&quot;display: none;&quot;>
+        &lt;p>This is the main page&lt;/p>
+    &lt;/div>
+
+    &lt;div data-page=&quot;more&quot; style=&quot;display: none;&quot;>
+        &lt;p>This is another page&lt;/p>
+    &lt;/div>
+
+    &lt;div data-page=&quot;pages&quot; style=&quot;display: none;&quot;>
+        &lt;p>This is yet another page&lt;/p>
+    &lt;/div>
+&lt;/body>
+&lt;/html></code></pre><p>To achieve that, we will give build instructions to <code>gulp</code> on our <code>gulpfile.js</code>.</p>
+<h3>Building our app</h3><p>Create a <code>gulpfile.js</code> and add the following dependencies:</p>
+<pre class="prettyprint source lang-javascript"><code>const fs   = require('fs'),
+      gulp = require('gulp'),
+      tap  = require('gulp-tap');</code></pre><ul>
+<li><code>gulp</code>is the library that we will use to build our app.</li>
+<li><code>gulp-tap</code> is a <code>gulp</code> plugin that allows us to manually modify a file.</li>
+<li><code>fs</code> is node's filesystem, that allows us to read files from our system.</li>
+</ul>
+<p>Now add the following constants containing the structure of our project. Feel free to modify them to your convenience:</p>
+<pre class="prettyprint source lang-javascript"><code>const HTML_MAIN      = './index.html',
+      HTML_PAGES     = './pages',
+      HTML_DEST      = './build', // Can't be './' or else it'd
+                                  // overwrite 'index.html'
+      HTML_PAGES_TAG = '&lt;pages />';</code></pre><p>Now we need to create a gulp task. If you're not familiar with gulp, each gulpfile contains different tasks that can depend on each other. Each task should achieve a single goal. Since that's what we're doing here, we'll put all our code under the <code>default</code> task:</p>
+<pre class="prettyprint source lang-javascript"><code>gulp.task('default', function(){
+    // Our code goes here
+});</code></pre><p>When we run <code>gulp</code> from the command line, the code from that task gets executed. What we need to do now is load the <code>index.html</code> file into the gulp task.</p>
+<pre class="prettyprint source lang-javascript"><code>gulp.task('default', function(){
+    return gulp.src(HTML_MAIN)              // Load index.html
+               .pipe(gulp.dest(HTML_DEST)); // Save it to ./build/index.html
+});</code></pre><p>That was easy. Go ahead and type <code>gulp</code> in your command line to see if everything went right. You should find a copy of your <code>index.html</code> in the <code>/build</code> folder.</p>
+<p>The task merely does that though. What we need now is to replace the <code>&lt;pages /&gt;</code> tag with the pages themselves. For that, we'll define a custom function below the gulp task:</p>
+<pre class="prettyprint source lang-javascript"><code>function getHtmlPages() {
+    var regex = /(.+)\.html/; // Matches every html file
+    var pages = '';
+
+    // Get the pages list
+    var filenames = fs.readdirSync(HTML_PAGES);
+
+    // Filter out every element that doesn't match the regex
+    // So, every non-html file
+    filenames = filenames.filter(val => {
+        return val.match(regex) !== null;
+    });
+
+    // Add each file to the pages string,
+    // wrapped around a div containing the page's name
+    for (var i = 0; i &lt; filenames.length; i++) {
+        pages += '&lt;div data-page=&quot;' + filenames[i].match(regex)[1] + '&quot; ' +
+                      'style=&quot;display: none;&quot;>';
+        pages += fs.readFileSync(HTML_PAGES + '/' + filenames[i], 'utf-8');
+        pages += '&lt;/div>';
+    }
+
+    return pages;
+}</code></pre><p>Basicly, this function returns a string with the content of every single html page. It wraps it arounds a div with <code>data-page=&quot;page_name&quot;</code> and <code>style=&quot;display: none;&quot;</code>, the two requirements that a page needs to meet for <code>pagemanager</code> to work porperly.</p>
+<p>Now, the last thing we need is replacing <code>&lt;pages /&gt;</code> with that string. We can do that with the help of  <code>gulp-tap</code>. Let's get back to our gulp task:</p>
+<pre class="prettyprint source lang-javascript"><code>gulp.task('default', function(){
+    return gulp.src(HTML_MAIN)
+               .pipe(tap(function(file, t){
+                   file.contents = new Buffer(
+                       file.contents
+                           .toString('utf-8')
+                           .replace(
+                               HTML_PAGES_TAG,
+                               getHtmlPages()
+                           ),
+                       'utf-8'
+                   );
+               }))
+               .pipe(gulp.dest(HTML_DEST));
+});</code></pre><p>Okay, lots of stuff going on there. Let's break it down:</p>
+<ul>
+<li>First, <code>tap(file, t)</code> provides us with a file. We don't care about the <code>t</code>. And we only care about <code>file.contents</code>, wich is a <a href="https://nodejs.org/api/buffer.html">Buffer</a> that contains our <code>index.html</code>.</li>
+<li><p>Because it's a Buffer, we need to set <code>file.contents</code> to a buffer, not a string. The way to do that is:</p>
+<pre class="prettyprint source lang-javascript"><code>file.contents = new Buffer(string, encoding);
+
+// For instance:
+file.contents = new Buffer('&lt;p>This is the new file!&lt;/p>', 'utf-8');
+// our './build/index.html' would only contain that string.</code></pre></li>
+<li>The string we need to pass to the <code>new Buffer()</code> is our final html. So first we need to get the current html from <code>index.html</code>:<pre class="prettyprint source lang-javascript"><code>file.contents.toString('utf-8')</code></pre></li>
+<li>Finally, we need to replace <code>&lt;pages /&gt;</code> with the result of <code>getHtmlPages()</code><pre class="prettyprint source lang-javascript"><code>.replace(HTML_PAGES_TAG, getHtmlPages())</code></pre></li>
+</ul>
+<p>And that's it. Our gulp task is done. Try it by running</p>
+<pre class="prettyprint source"><code>gulp</code></pre><p>Check your <code>./build/index.html</code>. It should be that horrendous html file containing evey page that we were previously talking about. Except for the fact that you don't have to work with it! You just have to distribute it, and forget about it.</p>
+<p>We're almost done. But remember, you have to actually use <code>pagemanager</code>! Otherwise, no page will be shown in your final html.</p>
+<p>Include a quick script in your app:</p>
+<pre class="prettyprint source lang-javascript"><code>const PageManager = require('pagemanager'),
+      $           = require('jquery'); // Pagemanager depends on jQuery, so you
+                                       // might as well use it too.
+
+$(document).ready(() => {
+    var pm = new PageManager('main');
+});</code></pre><p>And you're done!</p>
+<p>How do you include the script in your app is up to you, though. Now that you have experience with gulp, check out <a href="http://browserify.org/">Browserify</a> and the <a href="https://www.npmjs.com/package/gulp-browserify">gulp-browserify</a> plugin. Or follow the instructions in <a href="tutorial-Converting-to-browser-script.html">Converting from CommonJS to browser script</a> otherwise.</p>
+<p>Good luck!</p>
+</article>
+
+</section>
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Sep 13 2016 17:38:49 GMT+0200 (Hora de verano romance) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
